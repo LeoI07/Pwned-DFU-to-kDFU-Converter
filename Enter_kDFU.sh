@@ -62,6 +62,9 @@ fi
 cd SSH-Ramdisk-$device
 
 if [ "$is_64" = "true" ]; then
+    echo 64-bit devices are not supported yet.
+    exit
+    ## Existing code kept here for future 64-bit device support.
     echo Sending iBSS
     sleep 2s
     irecovery -f iBSS.img4
@@ -89,30 +92,33 @@ if [ "$is_64" = "true" ]; then
     irecovery -f kernelcache.img4
     irecovery -c bootx
 else
-    echo Sending iBSS
+    echo Sending iBSS...
     irecovery -f iBSS
-    echo Sending iBEC
+    echo Sending iBEC...
     irecovery -f iBEC
-    echo "Please disconnect and reconnect your device, then press return to continue..."
-    read -s
-    echo Sending ramdisk
+    irecovery -r
+    echo Sending ramdisk...
     irecovery -f ramdisk.dmg
     irecovery -c ramdisk
-    echo Sending devicetree
+    echo Sending device tree...
     irecovery -f devicetree
     irecovery -c devicetree
-    echo Sending kernelcache
+    echo Sending kernel cache...
     irecovery -f kernelcache
+    echo Booting ramdisk...
     irecovery -c bootx
 fi
 
 iproxy 2222 22 &
 
-until ssh -p 2222 root@127.0.0.1 "kloader /iBSS"; do
-    :
+echo Waiting for ramdisk to boot...
+## On an iPad2,5 you must wait for more than ~3.285 seconds.
+sleep 4
+until ssh -p 2222 root@127.0.0.1 "kloader iBSS"; do
+    echo Failed to SSH into ramdisk. Trying again in 1 second...
+    sleep 1
 done
 
 echo Done
 cd ..
-
-
+exit

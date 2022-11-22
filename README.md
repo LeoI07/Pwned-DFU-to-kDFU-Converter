@@ -26,7 +26,8 @@ bash Enter_kDFU.sh -d <device>
 ```
 Note: You need libirecovery
 
-# It does not yet work with any devices I've tested it on
+## Does it work?
+Not on any devices I've tested it on. The ramdisk boots from kDFU mode on an iPad2,5, but it does not re-enter kDFU.
 
 # Credits/Thanks to
 - @Ralph0045 for his SSH ramdisk maker and loader </br>

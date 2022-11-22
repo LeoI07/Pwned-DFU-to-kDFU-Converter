@@ -156,6 +156,9 @@ echo Making ramdisk...
 
 {
 if [ "$is_64" = "true" ]; then
+    echo 64-bit devices are not supported yet.
+    exit
+    ## Existing code kept here for future 64-bit device support.
     ../../bin/tsschecker -d $device -e FFFFFFFFFFFFF -l -s
     plutil -extract ApImg4Ticket xml1 -o - *.shsh2 | xmllint -xpath '/plist/data/text()' - | base64 -D > apticket.der
     ../../bin/Kernel64Patcher kernelcache.raw kcache.patched -a
@@ -216,7 +219,7 @@ else
     ../../bin/iBoot32Patcher iBSS.raw iBSS.patched -r
     ../../bin/xpwntool iBSS.patched iBSS -t iBSS.dec.img3
     mv -v iBSS ../
-    cp -a ../iBSS ramdisk_mountpoint/
+    cp -a ../iBSS ramdisk_mountpoint/private/var/root/
     hdiutil detach ramdisk_mountpoint
     ../../bin/xpwntool RestoreRamDisk.raw.dmg ramdisk.dmg -t RestoreRamDisk.dec.img3
     mv -v ramdisk.dmg ../
