@@ -4,6 +4,7 @@
 
 echo "**** SSH Ramdisk_Maker 2.0 ****"
 echo made by @Ralph0045
+echo "Modified by LeoI07 for pwned DFU to kDFU conversion"
 
 if [ $# -lt 2 ]; then
 echo "Usage:
@@ -92,7 +93,7 @@ cd SSH-Ramdisk-$device/work
 
 ## Get wiki keys page
 
-echo Downloadking firmware keys...
+echo Downloading firmware keys...
 
 curl "https://www.theiphonewiki.com/$RootFS"_"$BuildID"_"($device)" --output temp_keys.html &> /dev/null
 
@@ -209,13 +210,16 @@ else
     mkdir ramdisk_mountpoint
     hdiutil attach -mountpoint ramdisk_mountpoint/ RestoreRamDisk.raw.dmg
     tar -xvf ../../resources/ssh.tar -C ramdisk_mountpoint/
-    hdiutil detach ramdisk_mountpoint
-    ../../bin/xpwntool RestoreRamDisk.raw.dmg ramdisk.dmg -t RestoreRamDisk.dec.img3
-    mv -v ramdisk.dmg ../
+    cp -a ../../resources/kloader ramdisk_mountpoint/usr/bin/
+    chmod +x ramdisk_mountpoint/usr/bin/kloader
     ../../bin/xpwntool iBSS.dec.img3 iBSS.raw
     ../../bin/iBoot32Patcher iBSS.raw iBSS.patched -r
     ../../bin/xpwntool iBSS.patched iBSS -t iBSS.dec.img3
     mv -v iBSS ../
+    cp -a ../iBSS ramdisk_mountpoint/
+    hdiutil detach ramdisk_mountpoint
+    ../../bin/xpwntool RestoreRamDisk.raw.dmg ramdisk.dmg -t RestoreRamDisk.dec.img3
+    mv -v ramdisk.dmg ../
     ../../bin/xpwntool iBEC.dec.img3 iBEC.raw
     ../../bin/iBoot32Patcher iBEC.raw iBEC.patched -r -d -b "rd=md0 -v amfi=0xff cs_enforcement_disable=1"
     ../../bin/xpwntool iBEC.patched iBEC -t iBEC.dec.img3

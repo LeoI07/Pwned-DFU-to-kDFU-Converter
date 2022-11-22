@@ -4,6 +4,7 @@
 
 echo "**** SSH Ramdisk_Loader 2.0 ****"
 echo made by @Ralph0045
+echo Modified by LeoI07 for pwned DFU to kDFU conversion
 
 if [ $# -lt 2 ]; then
 echo "Usage:
@@ -12,7 +13,7 @@ echo "Usage:
 
 [example]
 
-ramdisk_loader -d iPhone10,6
+Enter_kDFU -d iPhone10,6
 "
 exit
 fi
@@ -92,6 +93,8 @@ else
     irecovery -f iBSS
     echo Sending iBEC
     irecovery -f iBEC
+    echo "Please disconnect and reconnect your device, then press return to continue..."
+    read -s
     echo Sending ramdisk
     irecovery -f ramdisk.dmg
     irecovery -c ramdisk
@@ -102,6 +105,13 @@ else
     irecovery -f kernelcache
     irecovery -c bootx
 fi
+
+iproxy 2222 22 &
+
+until ssh -p 2222 root@127.0.0.1 "kloader /iBSS"; do
+    :
+done
+
 echo Done
 cd ..
 

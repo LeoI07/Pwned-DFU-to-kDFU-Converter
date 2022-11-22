@@ -116,3 +116,9 @@ echo "compareFiles is present"
 else
 curl https://raw.githubusercontent.com/dualbootfun/dualbootfun.github.io/d947e2c9b6090a1e65a46ea6a58cd840986ff9d9/source/compareFiles.py --output bin/compareFiles.py
 fi
+
+if [ -e "resources/kloader" ]; then
+echo "kloader is present"
+else
+curl https://github.com/axi0mX/ios-kexec-utils/raw/master/kloader --output resources/kloader
+fi
